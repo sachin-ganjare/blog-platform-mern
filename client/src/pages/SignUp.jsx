@@ -61,11 +61,11 @@ export default function SignUp() {
               <TextInput type='text' placeholder='Username' id='username' onChange={handleChange} />
             </div>
             <div>
-              <Label htmlFor="username"> Your email: </Label>
+              <Label htmlFor="email"> Your email: </Label>
               <TextInput type='email' placeholder='name@company.com' id='email' onChange={handleChange} />
             </div>
             <div>
-              <Label htmlFor="username"> Your password: </Label>
+              <Label htmlFor="password"> Your password: </Label>
               <TextInput type='password' placeholder='Password' id='password' onChange={handleChange} />
             </div>
             <Button disabled={loading} type='submit' className="mt-5 bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:bg-gradient-to-l focus:ring-purple-200 dark:focus:ring-purple-800 w-full">
