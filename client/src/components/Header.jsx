@@ -2,12 +2,15 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Button, Navbar, NavbarToggle, NavbarLink, NavbarCollapse, TextInput, Dropdown, Avatar, DropdownHeader, DropdownItem, DropdownDivider } from 'flowbite-react'
 import { AiOutlineSearch } from "react-icons/ai";
-import { FaMoon } from "react-icons/fa"
-import { useSelector } from 'react-redux';
+import { FaMoon, FaSun } from "react-icons/fa"
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleTheme } from '../redux/theme/themeSlice'
 
 export default function Header() {
     const path = useLocation().pathname;
-    const { currentUser } = useSelector(state => state.user)
+    const dispatch = useDispatch();
+    const { currentUser } = useSelector(state => state.user);
+    const { theme } = useSelector(state => state.theme);
 
     return (
         <Navbar className="border-b-2">
@@ -28,8 +31,8 @@ export default function Header() {
             </Button>
 
             <div className="flex gap-2 md:order-2">
-                <Button color="gray" className='sm:inline' pill>
-                    <FaMoon />
+                <Button color="gray" className='sm:inline' pill onClick={() => dispatch(toggleTheme())}>
+                    {theme === 'light' ? <FaSun /> : <FaMoon />}
                 </Button>
                 {currentUser ? (
                     <Dropdown arrowIcon={false} inline label={
@@ -50,28 +53,28 @@ export default function Header() {
                         <DropdownItem>Sign out</DropdownItem>
                     </Dropdown>
                 ) : (
-                    <Link to = '/sign-in'>
-                    <Button className = 'bg-gradient-to-br from-purple-600 to-blue-500 text-white hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-blue-800 outline'>
-                        Sign In
-                    </Button>
-        </Link>
-    )
-}
+                    <Link to='/sign-in'>
+                        <Button className='bg-gradient-to-br from-purple-600 to-blue-500 text-white hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-blue-800 outline'>
+                            Sign In
+                        </Button>
+                    </Link>
+                )
+                }
 
-<NavbarToggle />
+                <NavbarToggle />
             </div >
-    <NavbarCollapse>
-        <NavbarLink active={path === "/"} as="div">
-            <Link to="/">Home</Link>
-        </NavbarLink>
+            <NavbarCollapse>
+                <NavbarLink active={path === "/"} as="div">
+                    <Link to="/">Home</Link>
+                </NavbarLink>
 
-        <NavbarLink active={path === "/about"} as="div">
-            <Link to="/about">About</Link>
-        </NavbarLink>
-        <NavbarLink active={path === "/projects"} as="div">
-            <Link to="/projects">Projects</Link>
-        </NavbarLink>
-    </NavbarCollapse>
+                <NavbarLink active={path === "/about"} as="div">
+                    <Link to="/about">About</Link>
+                </NavbarLink>
+                <NavbarLink active={path === "/projects"} as="div">
+                    <Link to="/projects">Projects</Link>
+                </NavbarLink>
+            </NavbarCollapse>
         </Navbar >
     );
 }

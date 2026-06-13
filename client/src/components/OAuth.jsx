@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 export default function OAuth() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
+
     const handleGoogleClick = async () => {
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
