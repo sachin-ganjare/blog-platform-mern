@@ -1,16 +1,33 @@
-import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Button, Navbar, NavbarToggle, NavbarLink, NavbarCollapse, TextInput, Dropdown, Avatar, DropdownHeader, DropdownItem, DropdownDivider } from 'flowbite-react'
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa"
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice'
+import { signOutSuccess } from '../redux/user/userSlice'
+import { useNavigate } from 'react-router-dom'
 
 export default function Header() {
     const path = useLocation().pathname;
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { currentUser } = useSelector(state => state.user);
     const { theme } = useSelector(state => state.theme);
+
+    const handleSignOut = async () => {
+        try {
+            const res = await fetch('/api/auth/signout', {
+                method: 'POST',
+            });
+
+            if (res.ok) {
+                dispatch(signOutSuccess());
+                navigate('/sign-in');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <Navbar className="border-b-2">
@@ -50,7 +67,7 @@ export default function Header() {
                             <DropdownItem>Profile</DropdownItem>
                         </Link>
                         <DropdownDivider />
-                        <DropdownItem>Sign out</DropdownItem>
+                        <DropdownItem onClick={handleSignOut}>Sign out</DropdownItem>
                     </Dropdown>
                 ) : (
                     <Link to='/sign-in'>
