@@ -8,19 +8,23 @@ import Projects from './pages/Projects'
 import About from './pages/About'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
+import PrivateRoute from './components/PrivateRoute.jsx'
+
 function App() {
   return (
     <BrowserRouter>
-      <Header/>
+      <Header />
       <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/sign-in" element={<SignIn/>}/>
-        <Route path="/dashboard" element={<Dashboard/>}/>
-        <Route path="/sign-up" element={<SignUp/>}/>
-        <Route path="/projects" element={<Projects/>}/>
-        <Route path="/about" element={<About/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/about" element={<About />} />
       </Routes>
-        <Footer/>
+      <Footer />
     </BrowserRouter>
   )
 }

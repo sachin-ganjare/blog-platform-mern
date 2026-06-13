@@ -39,7 +39,7 @@ export default function OAuth() {
     return (
         <Button
             type="button"
-            className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:bg-gradient-to-l focus:ring-pink-200"
+            className="w-full  text-white"
             onClick={handleGoogleClick}
             outline
         >
