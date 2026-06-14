@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Alert, Button, TextInput } from 'flowbite-react'
+import { Alert, Button, ModalBody, Modal, ModalHeader, TextInput } from 'flowbite-react'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
-import { signOutSuccess, updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutSuccess, updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'
 import { useNavigate } from 'react-router-dom'
+import { HiOutlineExclamationCircle } from 'react-icons/hi'
 
 export default function DashProfile() {
     const { currentUser, loading } = useSelector(state => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [imageFile, setImageFile] = useState(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
     const [imageFileUrl, setImageFileUrl] = useState(null);
     const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -162,9 +165,8 @@ export default function DashProfile() {
     };
 
     const handleDeleteAccount = async () => {
-        const confirmed = window.confirm('Are you sure you want to delete your account? This cannot be undone.');
-        if (!confirmed) return;
-
+        setIsDeleteModalOpen(false);
+        dispatch(deleteUserStart());
         setErrorMessage(null);
         setSuccessMessage(null);
 
@@ -178,18 +180,25 @@ export default function DashProfile() {
             const data = await res.json();
 
             if (data.success === false) {
+                dispatch(deleteUserFailure(data.message));
                 setErrorMessage(data.message);
                 return;
             }
 
             if (res.ok) {
-                dispatch(signOutSuccess());
+                dispatch(deleteUserSuccess());
                 navigate('/sign-in');
+            } else {
+                const msg = data.message || 'Delete failed';
+                dispatch(deleteUserFailure(msg));
+                setErrorMessage(msg);
             }
         } catch (error) {
+            dispatch(deleteUserFailure(error.message));
             setErrorMessage(error.message);
         }
     };
+
 
     const handleSignOut = async () => {
         try {
@@ -205,7 +214,7 @@ export default function DashProfile() {
             setErrorMessage(error.message);
         }
     };
-    
+
     return (
         <div className='max-w-lg mx-auto p-3 w-full'>
             <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
@@ -220,8 +229,8 @@ export default function DashProfile() {
                 </Alert>
             )}
             <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-                <input type='file' accept='image/*' onChange={handleImageChange} ref={filePickerRef} hidden/>
-                <div onClick={()=> filePickerRef.current.click()} className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full">
+                <input type='file' accept='image/*' onChange={handleImageChange} ref={filePickerRef} hidden />
+                <div onClick={() => filePickerRef.current.click()} className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full">
                     <img src={imageFileUrl || currentUser.profilePicture} alt="user" className='rounded-full w-full h-full object-cover border-8 bordder-[lightgray] overflow-hidden rounded-full'></img>
                     {uploading && (
                         <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/20 backdrop-blur-[1px]">
@@ -269,9 +278,33 @@ export default function DashProfile() {
                 </Button>
             </form>
             <div className="text-red-500 flex justify-between mt-5">
-                <span onClick={handleDeleteAccount} className='cursor-pointer'>Delete Account</span>
+                <span onClick={() => setIsDeleteModalOpen(true)} className='cursor-pointer'>Delete Account</span>
                 <span onClick={handleSignOut} className='cursor-pointer'>Sign Out</span>
             </div>
+
+            <Modal show={isDeleteModalOpen} size="md" onClose={() => setIsDeleteModalOpen(false)} popup>
+                <ModalHeader />
+                <ModalBody>
+                    <div className="text-center">
+                        <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto'/>
+                        <h3 className="text-lg mb-5 text-gray-500 dark:text-gray-400">Delete your account?</h3>
+                        {errorMessage && (
+                            <Alert color="red" className="mt-4" onDismiss={() => setErrorMessage(null)}>
+                                {errorMessage}
+                            </Alert>
+                        )}
+                        <div className="flex justify-center gap-4">
+                            <Button color="gray" onClick={() => setIsDeleteModalOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button color="failure" onClick={handleDeleteAccount} disabled={loading}>
+                                {loading ? 'Deleting...' : 'Delete'}
+                            </Button>
+                        </div>
+                    </div>
+                </ModalBody>
+            </Modal>
         </div>
     )
 }
+
