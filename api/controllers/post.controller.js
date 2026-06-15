@@ -10,8 +10,13 @@ export const create = async (req, res, next) => {
         return next(errorHandler(400, 'Please provide all required fields'))
     }
     const slug = req.body.title.split(' ').join('-').toLowerCase().replace(/[^a-zA-Z0-9-]/g, '-');
+    // Ensure Mongoose schema default works when user didn't upload an image.
+    // If the frontend sends image: null, Mongoose may store null instead of using `default`.
+    const { image, ...rest } = req.body;
+
     const newPost = new Post({
-        ...req.body,
+        ...rest,
+        ...(image ? { image } : {}),
         slug,
         userId: req.user.id,
     });
