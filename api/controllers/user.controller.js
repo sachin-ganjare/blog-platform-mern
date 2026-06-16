@@ -64,13 +64,19 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-    if (req.params.userId !== req.user.id) {
+    if (!req.user.isAdmin && req.params.userId !== req.user.id) {
         return next(errorHandler(403, 'You are not allowed to delete this user'));
     }
 
     try {
         await User.findByIdAndDelete(req.params.userId);
-        res.clearCookie('access_token').status(200).json('User has been deleted');
+
+        // Only clear auth cookie if the logged-in user deleted their own account.
+        if (req.params.userId === req.user.id) {
+            res.clearCookie('access_token');
+        }
+
+        res.status(200).json('User has been deleted');
     } catch (error) {
         next(error);
     }
