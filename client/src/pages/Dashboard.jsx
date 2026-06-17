@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useLocation } from 'react-router-dom'
 import DashSidebar from '../components/DashSidebar';
+import DashOverview from '../components/DashOverview';
 import DashProfile from '../components/DashProfile';
 import DashPosts from '../components/DashPosts';
 import DashUsers from '../components/DashUsers';
@@ -21,6 +22,8 @@ export default function Dashboard() {
         {/* Sidebar */}
         <DashSidebar />
       </div>
+      {/* Overview */}
+      {(tab === '' || tab === 'overview') && <DashOverview />}
       {/* Profile */}
       {tab === 'profile' && <DashProfile />}
 
@@ -36,4 +39,3 @@ export default function Dashboard() {
     </div>
   )
 }
-

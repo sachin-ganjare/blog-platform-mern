@@ -1,5 +1,5 @@
 import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from 'flowbite-react'
-import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiOutlineChatAlt2 } from 'react-icons/hi';
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiOutlineChatAlt2, HiOutlineHome } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -34,6 +34,11 @@ export default function DashSidebar() {
     <Sidebar className='w-full md:w-56'>
       <SidebarItems>
         <SidebarItemGroup className='flex flex-col gap-1'>
+          <Link to='/dashboard?tab=overview'>
+            <SidebarItem as='div' active={tab === '' || tab === 'overview'} icon={HiOutlineHome} labelColor='dark'>
+              Overview
+            </SidebarItem>
+          </Link>
           <Link to='/dashboard?tab=profile'>
             <SidebarItem as='div' active={tab === 'profile'} icon={HiUser} label={currentUser.isAdmin ? 'Admin' : 'User'} labelColor='dark'>
               Profile
